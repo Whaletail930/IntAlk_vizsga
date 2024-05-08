@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{style.css}" rel="stylesheet">
+    <title>Sprint Manager App</title>
+</head>
+<body>
+    <ul>
+        <li>
+            <a href="/runner/getRunner" class="btn btn-primary">Runners</a>
+        </li>
+
+        <script>
+            document.getElementById("viewRaceStats").addEventListener("click", function() {
+                var menu = document.getElementById("menu");
+                if (menu.style.display === "block") {
+                    menu.style.display = "none";
+                } else {
+                    var ids = [1, 2, 3, 4, 5];
+
+                    var menuItems = "";
+                    ids.forEach(function(id) {
+                        menuItems += '<a href="/result/getRaceStats/' + id + '">' + id + '</a>';
+                    });
+
+                    menu.innerHTML = menuItems;
+                    menu.style.display = "block";
+                }
+            });
+        </script>
+
+        <li>
+            <a href="/race/getRace" class="btn btn-primary">Races</a>
+        </li>
+    </ul>
+    <h2>Add Runner</h2>
+    <form id="addRunnerForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="gender">Gender:</label>
+        <input type="text" id="gender" name="gender"><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age"><br>
+
+        <button type="button" onclick="addRunner()">Submit</button>
+    </form>
+
+    <script>
+        function addRunner() {
+            var name = document.getElementById("name").value;
+            var gender = document.getElementById("gender").value;
+            var age = document.getElementById("age").value;
+
+            var payload = {
+                "name": name,
+                "gender": gender,
+                "age": parseInt(age)
+            };
+
+            fetch('runner/addRunner', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Runner added:', data);
+                    alert('Runner added successfully!');
+                })
+                .catch(error => {
+                    console.error('Error adding runner:', error);
+                    alert('Error adding runner. Please try again.');
+                });
+        }
+    </script>
+
+    <h2>Update Race</h2>
+    <form id="updateRaceForm">
+        <label for="id">Race ID:</label>
+        <input type="number" id="id" name="id"><br>
+
+        <label for="raceName">Race Name:</label>
+        <input type="text" id="raceName" name="raceName"><br>
+
+        <label for="distance">Distance:</label>
+        <input type="number" id="distance" name="distance"><br>
+
+        <button type="button" onclick="updateRace()">Update Race</button>
+    </form>
+
+    <script>
+        function updateRace() {
+            var id = document.getElementById("id").value;
+            var raceName = document.getElementById("raceName").value;
+            var distance = document.getElementById("distance").value;
+
+            var payload = {
+                "id": parseInt(id),
+                "raceName": raceName,
+                "distance": parseInt(distance)
+            };
+
+            fetch('race/updateRace', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Response:', data);
+                    alert('Race updated successfully!');
+                })
+                .catch(error => {
+                    console.error('Error updating race:', error);
+                    alert('Error updating race. Please try again.');
+                });
+        }
+    </script>
+
+    <h2>Add Result</h2>
+    <form id="addResultForm">
+        <label for="runnerName">Runner Name:</label>
+        <input type="text" id="runnerName" name="runnerName"><br>
+
+        <label for="raceName">Race Name:</label>
+        <input type="text" id="raceName" name="raceName"><br>
+
+        <label for="time">Time (in seconds):</label>
+        <input type="number" id="time" name="time"><br>
+
+        <button type="button" onclick="addResult()">Add Result</button>
+    </form>
+
+    <script>
+        function addResult() {
+            var runnerName = document.getElementById("runnerName").value;
+            var raceName = document.getElementById("raceName").value;
+            var time = document.getElementById("time").value;
+
+            var payload = {
+                "runnerName": runnerName,
+                "raceName": raceName,
+                "time": parseInt(time)
+            };
+
+            fetch('result/addResult', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Result added:', data);
+                    alert('Result added successfully!');
+                })
+                .catch(error => {
+                    console.error('Error adding result:', error);
+                    alert('Error adding result. Please try again.');
+                });
+        }
+    </script>
+
+</body>
+</html>
+

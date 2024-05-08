@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Runner Management</h1>
+
+<h2>All Runners</h2>
+<div id="allRunners"></div>
+
+<h2>Add New Runner</h2>
+<form id="addRunnerForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="gender">Gender:</label>
+    <input type="text" id="gender" name="gender" required><br>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" required><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    fetch('/runner/getRunner')
+        .then(response => response.json())
+        .then(data => {
+            const allRunnersDiv = document.getElementById('allRunners');
+            allRunnersDiv.innerHTML = '<ul>' + data.map(runner => `<li>${runner.name} (${runner.gender}, ${runner.age} years old)</li>`).join('') + '</ul>';
+        })
+        .catch(error => console.error('Error fetching runners:', error));
+
+    document.getElementById('addRunnerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const gender = document.getElementById('gender').value;
+        const age = parseInt(document.getElementById('age').value);
+
+        const payload = { name, gender, age };
+
+        fetch('/runner/addRunner', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Runner added:', data);
+                alert('Runner added successfully!');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error adding runner:', error);
+                alert('Error adding runner. Please try again.');
+            });
+    });
+</script>
+</body>
+</html>
